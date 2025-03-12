@@ -42,6 +42,7 @@ namespace EtwToPprof
       public decimal timeStart { get; set; }
       public decimal timeEnd { get; set; }
       public HashSet<string> processFilterSet { get; set; }
+      public HashSet<decimal> processIdFilterSet { get; set; }
     }
 
     public ProfileWriter(Options options)
@@ -98,6 +99,11 @@ namespace EtwToPprof
       if (sample.Stack != null && sample.Stack.Frames.Count != 0)
       {
         int processId = sample.Process.Id;
+
+        if (options.processIdFilterSet != null && options.processIdFilterSet.Count != 0 && !options.processIdFilterSet.Contains(processId)) {
+            return;
+        }
+
         foreach (var stackFrame in sample.Stack.Frames)
         {
           if (stackFrame.HasValue && stackFrame.Symbol != null)

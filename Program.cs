@@ -58,6 +58,11 @@ namespace EtwToPprof
                          + "All processes will be exported if set to *.")]
       public string processFilter { get; set; }
 
+      [Option('i', "processIdFilter", Required = false, Default = "",
+              HelpText = "Filter for process ids (comma-separated) to be included in the exported profile. "
+                         + "All processes will be exported if set to *.")]
+      public string processIdFilter { get; set; }
+
       [Option("includeInlinedFunctions", Required = false, Default = false,
               HelpText = "Whether inlined functions should be included in the exported profile (slow).")]
       public bool includeInlinedFunctions { get; set; }
@@ -138,6 +143,9 @@ namespace EtwToPprof
         {
           profileOpts.processFilterSet = new HashSet<string>(
             opts.processFilter.Trim().Split(",", StringSplitOptions.RemoveEmptyEntries));
+
+          profileOpts.processIdFilterSet = new HashSet<decimal>(
+                Array.ConvertAll(opts.processIdFilter.Trim().Split(",", StringSplitOptions.RemoveEmptyEntries), decimal.Parse));
         }
 
         var profileWriter = new ProfileWriter(profileOpts);
